@@ -8,8 +8,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-
-export type BenchmarkTab = 'Benchmark Creation' | 'Benchmark Deletion' | 'Reset' | '';
+import { type BenchmarkTab } from './types';
 
 defineProps<{
   tabs: BenchmarkTab[]

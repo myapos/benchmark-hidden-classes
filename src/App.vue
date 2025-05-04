@@ -10,17 +10,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, ComputedRef } from "vue";
-import Benchmark, { BenchMarkMode } from "./components/Benchmark.vue";
+import { computed, ref, type ComputedRef, type Component } from "vue";
+import Benchmark from "./components/Benchmark.vue";
 import Teaser from "./components/Teaser.vue";
-import Tabs, { BenchmarkTab } from "./components/Tabs.vue";
+import Tabs from "./components/Tabs.vue";
+import { type BenchmarkTab, type BenchmarkMode } from "./components/types";
+
 
 const activeTab = ref<BenchmarkTab>('')
-const onTabChange = (e: BenchmarkTab) => {
-  activeTab.value = e;
+const onTabChange = (tab: BenchmarkTab) => {
+  activeTab.value = tab;
 }
 
-const mode: ComputedRef<BenchMarkMode> = computed(() => {
+const mode: ComputedRef<BenchmarkMode> = computed(() => {
   switch (activeTab.value) {
     case 'Benchmark Creation':
       return 'creation';
@@ -30,16 +32,16 @@ const mode: ComputedRef<BenchMarkMode> = computed(() => {
       return '';
   }
 })
-const currentComponent = computed(() => {
-  switch (activeTab.value) {
-    case 'Benchmark Creation':
-      return Benchmark;
-    case 'Benchmark Deletion':
-      return Benchmark;
-    default:
-      return Teaser;
-  }
-});
+
+const componentMap: Record<string, Component> = {
+  'Benchmark Creation': Benchmark,
+  'Benchmark Deletion': Benchmark,
+};
+
+
+const currentComponent = computed(() =>
+  componentMap[activeTab.value] ?? Teaser
+);
 
 </script>
 

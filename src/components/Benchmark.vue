@@ -1,6 +1,6 @@
 <template>
     <section>
-        <Form :onSubmit="handleSubmit" />
+        <Form :onSubmit="handleSubmit" :mode="mode" />
         <Loader v-if="isProcessing" />
         <Line v-else :data="consistentData" :options="chartOptions" />
     </section>
@@ -14,6 +14,7 @@ import { Line } from "vue-chartjs";
 import runBenchmarkCreationProps from "../lib/runBenchmarkCreationProps";
 import runBenchmarkDeletionProps from "../lib/runBenchmarkDeletionProps";
 import { BenchmarkResult } from '../lib/types';
+import { type BenchmarkMode } from "./types";
 
 import {
     Chart as ChartJS,
@@ -41,9 +42,8 @@ ChartJS.register(
 const benchmarkData = ref<BenchmarkResult[]>([]);
 const isProcessing = ref<boolean>(false);
 
-export type BenchMarkMode = 'creation' | 'deletion' | ''
 const props = defineProps<{
-    mode: BenchMarkMode;
+    mode: BenchmarkMode;
 }>();
 
 const handleSubmit = async (e: Event) => {
