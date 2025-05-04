@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <section class="tabs">
-      <Tabs :tabs="['BenchmarkCreation', 'BenchmarkDeletion', 'Reset']" @tab-change="onTabChange" />
+      <Tabs :tabs="['Benchmark Creation', 'Benchmark Deletion', 'Reset']" @tab-change="onTabChange" />
     </section>
     <section class="benchmark-preview">
       <component :is="currentComponent" :mode="mode" />
@@ -22,9 +22,9 @@ const onTabChange = (e: BenchmarkTab) => {
 
 const mode: ComputedRef<BenchMarkMode> = computed(() => {
   switch (activeTab.value) {
-    case 'BenchmarkCreation':
+    case 'Benchmark Creation':
       return 'creation';
-    case 'BenchmarkDeletion':
+    case 'Benchmark Deletion':
       return 'deletion'
     default:
       return '';
@@ -32,9 +32,9 @@ const mode: ComputedRef<BenchMarkMode> = computed(() => {
 })
 const currentComponent = computed(() => {
   switch (activeTab.value) {
-    case 'BenchmarkCreation':
+    case 'Benchmark Creation':
       return Benchmark;
-    case 'BenchmarkDeletion':
+    case 'Benchmark Deletion':
       return Benchmark;
     default:
       return Teaser;

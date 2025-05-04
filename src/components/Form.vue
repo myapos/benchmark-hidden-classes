@@ -1,15 +1,8 @@
 <template>
   <form @submit.prevent="onSubmit" class="form">
     <label class="form-label">
-      Iterations:
-      <input
-        type="number"
-        min="0"
-        value="1000"
-        name="iterations"
-        required
-        class="form-input"
-      />
+      Iterations
+      <input type="number" min="0" value="1000" name="iterations" required class="form-input" />
     </label>
     <button type="submit" class="form-button">Run</button>
   </form>

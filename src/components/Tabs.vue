@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-export type BenchmarkTab = 'BenchmarkCreation' | 'BenchmarkDeletion' | 'Reset' | '';
+export type BenchmarkTab = 'Benchmark Creation' | 'Benchmark Deletion' | 'Reset' | '';
 
 defineProps<{
   tabs: BenchmarkTab[]
@@ -23,13 +23,13 @@ const activeTab = ref<BenchmarkTab>('')
 
 const handleTabs = (tab: BenchmarkTab) => {
   switch (tab) {
-    case 'BenchmarkCreation':
-      activeTab.value = 'BenchmarkCreation';
-      emit('tab-change', 'BenchmarkCreation');
+    case 'Benchmark Creation':
+      activeTab.value = 'Benchmark Creation';
+      emit('tab-change', 'Benchmark Creation');
       break;
-    case 'BenchmarkDeletion':
-      activeTab.value = 'BenchmarkDeletion';
-      emit('tab-change', 'BenchmarkDeletion');
+    case 'Benchmark Deletion':
+      activeTab.value = 'Benchmark Deletion';
+      emit('tab-change', 'Benchmark Deletion');
       break;
     case 'Reset':
       activeTab.value = '';
