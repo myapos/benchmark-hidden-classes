@@ -2,7 +2,7 @@
     <section>
         <Form :onSubmit="handleSubmit" :mode="mode" />
         <Loader v-if="isProcessing" />
-        <Line v-else :data="consistentData" :options="chartOptions" />
+        <Line v-else :data="lineData" :options="chartOptions" />
     </section>
 </template>
 
@@ -42,9 +42,11 @@ ChartJS.register(
 const benchmarkData = ref<BenchmarkResult[]>([]);
 const isProcessing = ref<boolean>(false);
 
+
 const props = defineProps<{
     mode: BenchmarkMode;
 }>();
+
 
 const handleSubmit = async (e: Event) => {
     if (isProcessing.value) {
@@ -86,8 +88,8 @@ const handleSubmit = async (e: Event) => {
     await nextTick();
 };
 
-const consistentData = computed(() => {
-    const data = {
+const lineData = computed(() => {
+    return {
         labels: benchmarkData.value.map((res) => `${res.properties}`),
         datasets: [
             {
@@ -104,9 +106,7 @@ const consistentData = computed(() => {
             },
         ],
     };
+})
 
-    return data;
-});
+
 </script>
-
-<style scoped></style>
