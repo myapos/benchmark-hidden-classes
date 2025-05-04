@@ -4,7 +4,7 @@
       <Tabs :tabs="['Benchmark Creation', 'Benchmark Deletion', 'Reset']" @tab-change="onTabChange" />
     </section>
     <section class="benchmark-preview">
-      <component :is="currentComponent" :mode="mode" />
+      <component :is="currentComponent" :mode="mode" :key="mode" />
     </section>
   </section>
 </template>
@@ -55,7 +55,6 @@ const currentComponent = computed(() =>
 
 button {
   outline: none;
-  /* border:none; */
 }
 
 .tabs {
