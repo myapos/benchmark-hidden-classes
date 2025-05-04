@@ -1,88 +1,80 @@
 <template>
-  <div>
-    <Form :onSubmit="handleSubmit" />
-    <Loader v-if="isProcessing"/>
-    <Line v-else :data="consistentData" :options="chartOptions" />
-  </div>
+  <section class="container">
+    <section class="tabs">
+      <Tabs :tabs="['BenchmarkCreation', 'BenchmarkDeletion', 'Reset']" @tab-change="onTabChange"/>
+    </section>
+    <section class="benchmark-preview">
+      <component :is="currentComponent"/>
+    </section>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick } from "vue";
-import Form from "./components/Form.vue";
-import Loader from "./components/Loader.vue";
-import { Line } from "vue-chartjs";
-import runBenchmarkProps, { BenchmarkResult } from "./lib/runBenchmarkProps";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import {chartOptions} from './constants';
+import { computed, ref } from "vue";
+import BenchmarkCreation from "./components/BenchmarkCreation.vue";
+import BenchMarkDeletion from "./components/BenchMarkDeletion.vue";
+import Teaser from "./components/Teaser.vue";
+import Tabs, {BenchmarkTab} from "./components/Tabs.vue";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+const activeTab= ref<BenchmarkTab>('')
+const onTabChange = (e:BenchmarkTab) => {
+  activeTab.value = e;
+}
 
-const benchmarkData = ref<BenchmarkResult[]>([]);
-const isProcessing = ref<boolean>(false);
-
-const handleSubmit = async (e: Event) => {
-  if (isProcessing.value) {
-    console.warn("Already processing. Please wait");
-    return;
+const currentComponent = computed(() => {
+  switch (activeTab.value) {
+    case 'BenchmarkCreation':
+      return BenchmarkCreation;
+    case 'BenchmarkDeletion':
+      return BenchMarkDeletion;
+    default:
+      return Teaser;
   }
-
-  const form = e.target as HTMLFormElement;
-  const formData = new FormData(form);
-  const iterations = parseInt(formData.get("iterations") as string, 10);
-
-  if (isNaN(iterations)) {
-    console.warn("Invalid input for iterations");
-    return;
-  }
-
-  isProcessing.value = true;
-  await nextTick();
-  // allow the message to be rendered before heavy computation starts
-  // simulate async work
-  benchmarkData.value = await new Promise((resolve) => {
-    setTimeout(() => resolve(runBenchmarkProps(iterations)), 0);
-  });
-
-  isProcessing.value = false;
-  await nextTick();
-};
-
-const consistentData = computed(() => {
-  const data = {
-    labels: benchmarkData.value.map((res) => `${res.properties}`),
-    datasets: [
-      {
-        label: "Consistent",
-        backgroundColor: "#f87979",
-        data: benchmarkData.value.map(
-          (benchmarkRes) => benchmarkRes.consistent
-        ),
-      },
-      {
-        label: "Dynamic",
-        backgroundColor: "green",
-        data: benchmarkData.value.map((benchmarkRes) => benchmarkRes.dynamic),
-      },
-    ],
-  };
-
-  return data;
 });
+
 </script>
+
+<style scoped>
+
+.container {
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  height: 400px;
+}
+
+button {
+  outline:none;
+  /* border:none; */
+}
+
+.tabs {
+  display: flex;
+  gap:5px;
+}
+
+.tab {
+  padding: 5px;
+  background-color: #ccc;
+  border:1px solid #ccc;
+  border-radius:5px;
+}
+
+
+.tab:hover {
+  cursor:pointer;
+  color: #eee;
+}
+
+.active-tab {
+  color: #fff;
+}
+
+.benchmark-preview {
+  display: flex;
+  flex-direction:column;
+  justify-content: space-between;
+  min-height: 400px;
+  width:autp;
+}
+</style>

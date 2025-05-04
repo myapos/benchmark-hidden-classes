@@ -1,4 +1,4 @@
-export const chartOptions = {
+const chartOptions = {
   responsive: true,
   scales: {
     x: {
@@ -7,7 +7,7 @@ export const chartOptions = {
         text: "#Properties", // Label for X axis
         font: {
           size: 14,
-          weight: "bold",
+          weight: "bold" as const,
         },
       },
     },
@@ -17,9 +17,11 @@ export const chartOptions = {
         text: "Time (ms)", // Label for Y axis
         font: {
           size: 14,
-          weight: "bold",
+          weight: "bold" as const,
         },
       },
     },
   },
 };
+
+export default chartOptions;
