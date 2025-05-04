@@ -1,30 +1,88 @@
-<script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
-</script>
-
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <Form :onSubmit="handleSubmit" />
+    <Loader v-if="isProcessing"/>
+    <Line v-else :data="consistentData" :options="chartOptions" />
   </div>
-  <HelloWorld msg="Vite + Vue 123" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script setup lang="ts">
+import { ref, computed, nextTick } from "vue";
+import Form from "./components/Form.vue";
+import Loader from "./components/Loader.vue";
+import { Line } from "vue-chartjs";
+import runBenchmarkProps, { BenchmarkResult } from "./lib/runBenchmarkProps";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import {chartOptions} from './constants';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const benchmarkData = ref<BenchmarkResult[]>([]);
+const isProcessing = ref<boolean>(false);
+
+const handleSubmit = async (e: Event) => {
+  if (isProcessing.value) {
+    console.warn("Already processing. Please wait");
+    return;
+  }
+
+  const form = e.target as HTMLFormElement;
+  const formData = new FormData(form);
+  const iterations = parseInt(formData.get("iterations") as string, 10);
+
+  if (isNaN(iterations)) {
+    console.warn("Invalid input for iterations");
+    return;
+  }
+
+  isProcessing.value = true;
+  await nextTick();
+  // allow the message to be rendered before heavy computation starts
+  // simulate async work
+  benchmarkData.value = await new Promise((resolve) => {
+    setTimeout(() => resolve(runBenchmarkProps(iterations)), 0);
+  });
+
+  isProcessing.value = false;
+  await nextTick();
+};
+
+const consistentData = computed(() => {
+  const data = {
+    labels: benchmarkData.value.map((res) => `${res.properties}`),
+    datasets: [
+      {
+        label: "Consistent",
+        backgroundColor: "#f87979",
+        data: benchmarkData.value.map(
+          (benchmarkRes) => benchmarkRes.consistent
+        ),
+      },
+      {
+        label: "Dynamic",
+        backgroundColor: "green",
+        data: benchmarkData.value.map((benchmarkRes) => benchmarkRes.dynamic),
+      },
+    ],
+  };
+
+  return data;
+});
+</script>
